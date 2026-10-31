@@ -1,0 +1,917 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<meta name="description" content="LocalNest is a local-first AI coding agent for Antigravity. It runs on Ollama models on your own computer, inspects your workspace before it answers, and changes nothing until you review and approve it." />
+<link rel="icon" href="data:," />
+<title>LocalNest — Local AI coding agent for Antigravity</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#f4f2ec;
+    --surface:#fffdf8;
+    --surface-2:#ebe7dc;
+    --panel:#101512;
+    --panel-2:#171d19;
+    --panel-line:#2a332d;
+    --ink:#1b211d;
+    --muted:#5c665f;
+    --line:#d8d2c4;
+    --teal:#0f766e;
+    --teal-bright:#14b8a6;
+    --teal-deep:#115e59;
+    --amber:#b45309;
+    --red:#b91c1c;
+    --code-bg:#101512;
+    --radius:14px;
+    --shadow:0 18px 40px rgba(27,33,29,.14);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0c0f0d;
+      --surface:#131713;
+      --surface-2:#1b211c;
+      --ink:#e8ece7;
+      --muted:#a3ada4;
+      --line:#2a332d;
+      --teal:#2dd4bf;
+      --teal-deep:#5eead4;
+      --shadow:0 18px 40px rgba(0,0,0,.45);
+    }
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+    font-size:17px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--teal-deep)}
+  @media (prefers-color-scheme: dark){ a{color:var(--teal)} }
+  ::selection{background:var(--teal);color:#fff}
+  .wrap{max-width:1140px;margin:0 auto;padding:0 22px}
+  .mono{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace}
+
+  /* ---------- Nav ---------- */
+  header.nav{
+    position:sticky;top:0;z-index:20;
+    background:color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{display:flex;align-items:center;gap:26px;padding:13px 0;flex-wrap:wrap}
+  .wordmark{display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--ink);font-weight:700;font-size:19px;letter-spacing:-.02em}
+  .wordmark svg{flex:none}
+  .wordmark small{font-weight:500;font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:99px;padding:2px 8px}
+  nav.links{display:flex;gap:22px;margin-left:auto;flex-wrap:wrap}
+  nav.links a{color:var(--ink);text-decoration:none;font-size:15px;font-weight:500}
+  nav.links a:hover{color:var(--teal-deep);text-decoration:underline;text-underline-offset:4px}
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;
+    background:var(--teal-deep);color:#fff;text-decoration:none;
+    font-weight:600;font-size:15px;padding:10px 18px;border-radius:9px;border:1px solid var(--teal-deep);
+    cursor:pointer;
+  }
+  .btn:hover{background:var(--teal);border-color:var(--teal)}
+  .btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+  .btn.ghost:hover{border-color:var(--teal-deep);color:var(--teal-deep);background:transparent}
+  .btn.small{padding:8px 14px;font-size:14px}
+  @media (prefers-color-scheme: dark){ .btn{background:#0f766e;border-color:#0f766e} .btn:hover{background:#14b8a6;border-color:#14b8a6} }
+
+  /* ---------- Hero ---------- */
+  .hero{padding:58px 0 30px}
+  .hero-grid{display:grid;grid-template-columns:1.02fr .98fr;gap:44px;align-items:start}
+  .version-pill{
+    display:inline-flex;gap:8px;align-items:center;flex-wrap:wrap;
+    font-size:13.5px;font-weight:500;color:var(--muted);
+    border:1px solid var(--line);border-radius:99px;padding:5px 12px;background:var(--surface);
+  }
+  .version-pill b{color:var(--ink)}
+  .version-pill .dot{width:8px;height:8px;border-radius:50%;background:#059669;flex:none}
+  h1{
+    font-size:clamp(38px,4.6vw,54px);line-height:1.06;letter-spacing:-.03em;
+    margin:20px 0 16px;font-weight:700;
+  }
+  h1 em{font-style:normal;color:var(--teal-deep)}
+  @media (prefers-color-scheme: dark){ h1 em{color:var(--teal)} }
+  .lede{font-size:19px;line-height:1.6;color:var(--muted);max-width:34rem;margin:0 0 24px}
+  .lede strong{color:var(--ink);font-weight:600}
+  .cta-row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .setup-line{margin-top:18px;font-size:14.5px;color:var(--muted)}
+  .setup-line .mono{font-size:13.5px;color:var(--ink);background:var(--surface-2);padding:2px 7px;border-radius:6px}
+  .hero-note{margin-top:26px;border-top:1px solid var(--line);padding-top:16px;font-size:14.5px;color:var(--muted);max-width:34rem}
+  .hero-note b{color:var(--ink)}
+
+  /* ---------- Editor panel (live demo) ---------- */
+  .panel-shell{
+    background:var(--panel);color:#dbe4dc;border:1px solid var(--panel-line);
+    border-radius:16px;box-shadow:var(--shadow);overflow:hidden;
+  }
+  .panel-top{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--panel-line)}
+  .panel-top .tab-label{font-size:14px;font-weight:600;color:#e8ece7}
+  .pill-local{background:#0e7490;color:#fff;font-size:11px;font-weight:700;letter-spacing:.08em;padding:3px 7px;border-radius:5px}
+  .panel-top .spacer{flex:1}
+  .icon-btn{background:transparent;border:1px solid var(--panel-line);color:#cbd5cd;border-radius:7px;width:30px;height:30px;cursor:pointer;font-size:15px;line-height:1}
+  .icon-btn:hover{border-color:#14b8a6;color:#fff}
+  .mode-row{display:flex;align-items:center;gap:6px;padding:11px 14px;border-bottom:1px solid var(--panel-line);flex-wrap:wrap}
+  .mode-btn{
+    background:transparent;border:1px solid transparent;color:#aab4ab;border-radius:8px;
+    padding:7px 14px;font:inherit;font-size:14px;font-weight:500;cursor:pointer;
+  }
+  .mode-btn:hover{color:#fff}
+  .mode-btn[aria-selected="true"]{background:#1e2b23;color:#fff;border-color:#33413a}
+  .fast-toggle{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:13.5px;color:#aab4ab;cursor:pointer;background:none;border:0;padding:6px 2px;font:inherit}
+  .switch{width:36px;height:20px;border-radius:99px;background:#33413a;position:relative;flex:none;transition:background .15s}
+  .switch::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#dbe4dc;transition:left .15s}
+  .fast-toggle[aria-pressed="true"] .switch{background:#0e7490}
+  .fast-toggle[aria-pressed="true"] .switch::after{left:18px}
+  .status-line{padding:10px 16px;font-size:13px;color:#8fa096;border-bottom:1px solid var(--panel-line);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .status-line .ok{color:#34d399;font-weight:600}
+  .chat{padding:16px;display:flex;flex-direction:column;gap:12px;min-height:308px}
+  .bubble{border-radius:12px;padding:12px 14px;font-size:14.5px;line-height:1.55;max-width:100%}
+  .bubble.user{align-self:flex-end;background:#0e7490;color:#fff;border-bottom-right-radius:4px;max-width:78%}
+  .bubble.assistant{align-self:stretch;background:#1b211c;border:1px solid #2a332d;color:#dbe4dc}
+  .bubble.assistant h4{margin:0 0 6px;font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:#8fa096;font-weight:600}
+  .bubble.assistant p{margin:0 0 8px}
+  .bubble.assistant p:last-child{margin-bottom:0}
+  .bubble.assistant code{font-family:"IBM Plex Mono",monospace;font-size:13px;background:#0c0f0d;padding:1px 6px;border-radius:5px;color:#5eead4}
+  .bubble.error{border-left:3px solid #f87171}
+  .bubble.error h4{color:#fca5a5}
+  .step-tag{font-family:"IBM Plex Mono",monospace;font-size:12px;color:#5eead4}
+  .panel-foot{border-top:1px solid var(--panel-line);padding:11px 14px;display:flex;gap:14px;align-items:center;font-size:13px;color:#8fa096;flex-wrap:wrap}
+  .panel-foot .ready{margin-left:auto;color:#34d399;font-weight:600}
+  .chips{display:flex;gap:7px;padding:0 14px 10px;flex-wrap:wrap}
+  .chip{background:#1b211c;border:1px solid #2a332d;color:#aab4ab;border-radius:99px;padding:5px 11px;font-size:13px;cursor:pointer;font-family:"IBM Plex Mono",monospace}
+  .chip:hover{color:#fff;border-color:#14b8a6}
+  .composer{display:flex;gap:9px;padding:0 14px 14px;align-items:flex-end}
+  .composer label{position:absolute;left:-9999px}
+  .composer textarea{
+    flex:1;background:#0c0f0d;border:1px solid #2a332d;color:#e8ece7;border-radius:10px;
+    padding:11px 12px;font:inherit;font-size:14.5px;resize:none;min-height:46px;
+  }
+  .composer textarea:focus{outline:2px solid #14b8a6;outline-offset:1px}
+  .send-btn{background:#0e7490;color:#fff;border:0;border-radius:9px;padding:12px 18px;font:inherit;font-weight:600;font-size:14.5px;cursor:pointer}
+  .send-btn:hover{background:#0891b2}
+  .panel-caption{margin-top:12px;font-size:13.5px;color:var(--muted);text-align:center}
+  .panel-caption b{color:var(--ink)}
+
+  /* ---------- Fact strip ---------- */
+  .facts{
+    margin:34px 0 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+    display:grid;grid-template-columns:repeat(4,1fr);
+  }
+  .fact{padding:18px 20px;border-left:1px solid var(--line)}
+  .fact:first-child{border-left:0;padding-left:0}
+  .fact b{display:block;font-size:16px;letter-spacing:-.01em}
+  .fact span{font-size:14px;color:var(--muted)}
+
+  /* ---------- Sections ---------- */
+  section.block{padding:64px 0 8px}
+  .section-head{max-width:44rem;margin-bottom:30px}
+  .section-head h2{font-size:clamp(28px,3.4vw,36px);line-height:1.15;letter-spacing:-.025em;margin:0 0 10px}
+  .section-head p{margin:0;color:var(--muted);font-size:18px}
+  .section-head .num{font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--teal-deep);font-weight:600;letter-spacing:.06em}
+  @media (prefers-color-scheme: dark){ .section-head .num{color:var(--teal)} }
+
+  /* Steps */
+  .steps{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+  .steps li{
+    display:grid;grid-template-columns:56px 1fr 1.2fr;gap:22px;
+    padding:22px 0;border-bottom:1px solid var(--line);align-items:start;
+  }
+  .steps .n{font-family:"IBM Plex Mono",monospace;font-size:15px;font-weight:600;color:var(--teal-deep);border:1px solid var(--line);border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;background:var(--surface)}
+  @media (prefers-color-scheme: dark){ .steps .n{color:var(--teal)} }
+  .steps h3{margin:2px 0 4px;font-size:18px;letter-spacing:-.01em}
+  .steps p{margin:0;color:var(--muted);font-size:15.5px}
+  .steps .detail{font-size:14.5px;color:var(--muted)}
+  .steps .detail code{font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--ink);background:var(--surface-2);padding:1px 6px;border-radius:5px}
+
+  /* Modes table */
+  .modes{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--surface)}
+  .mode-row-item{display:grid;grid-template-columns:150px 1fr 1fr;gap:0;border-bottom:1px solid var(--line)}
+  .mode-row-item:last-child{border-bottom:0}
+  .mode-row-item > div{padding:20px 22px}
+  .mode-row-item > div + div{border-left:1px solid var(--line)}
+  .mode-name{font-size:19px;font-weight:700;letter-spacing:-.01em}
+  .mode-name span{display:block;font-size:13px;font-weight:500;color:var(--muted);margin-top:3px}
+  .mode-row-item h4{margin:0 0 4px;font-size:13px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:600}
+  .mode-row-item p{margin:0;font-size:15px;color:var(--ink)}
+  .mode-row-item p.dim{color:var(--muted)}
+
+  /* Review split */
+  .split{display:grid;grid-template-columns:1fr 1.05fr;gap:40px;align-items:start}
+  .check-list{list-style:none;margin:22px 0 0;padding:0;display:grid;gap:14px}
+  .check-list li{display:flex;gap:12px;font-size:15.5px}
+  .check-list .tick{flex:none;width:24px;height:24px;border-radius:50%;background:var(--teal-deep);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;margin-top:1px}
+  .check-list p{margin:0}
+  .check-list p b{display:block}
+  .check-list p span{color:var(--muted);font-size:14.5px}
+
+  .proposal{
+    background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);overflow:hidden;
+  }
+  .proposal header{padding:14px 18px;border-bottom:1px solid var(--line);display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .proposal header b{font-size:15.5px}
+  .proposal header span{font-size:13px;color:var(--muted)}
+  .proposal header .state{margin-left:auto;font-size:13px;font-weight:600;padding:4px 10px;border-radius:99px;background:var(--surface-2);color:var(--muted)}
+  .proposal header .state.approved{background:#d1fae5;color:#065f46}
+  .proposal header .state.discarded{background:#fee2e2;color:#991b1b}
+  @media (prefers-color-scheme: dark){
+    .proposal header .state.approved{background:#064e3b;color:#a7f3d0}
+    .proposal header .state.discarded{background:#450a0a;color:#fca5a5}
+  }
+  .file{padding:14px 18px;border-bottom:1px solid var(--line)}
+  .file:last-of-type{border-bottom:0}
+  .file .file-head{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+  .file .file-head code{font-family:"IBM Plex Mono",monospace;font-size:13.5px;font-weight:600}
+  .file .file-head .tag{font-size:12px;font-weight:600;padding:2px 8px;border-radius:99px;background:var(--surface-2);color:var(--muted)}
+  .file pre{
+    margin:0;background:var(--code-bg);color:#dbe4dc;border-radius:9px;padding:12px 14px;
+    font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.6;white-space:pre-wrap;word-break:break-word;
+  }
+  .file pre .add{color:#6ee7b7}
+  .file pre .ctx{color:#8fa096}
+  .proposal-actions{display:flex;gap:9px;padding:14px 18px;flex-wrap:wrap;border-top:1px solid var(--line);background:var(--surface-2)}
+  .proposal-actions button{font:inherit;font-size:14px;font-weight:600;padding:9px 15px;border-radius:8px;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+  .proposal-actions button.primary{background:var(--teal-deep);border-color:var(--teal-deep);color:#fff}
+  .proposal-actions button:disabled{opacity:.45;cursor:default}
+  .proposal-note{padding:12px 18px;font-size:13.5px;color:var(--muted);border-top:1px solid var(--line)}
+  .proposal-note:empty{display:none}
+
+  /* Setup */
+  .setup-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:40px;align-items:start}
+  .setup-steps{list-style:none;margin:0;padding:0;display:grid;gap:0}
+  .setup-steps li{padding:18px 0;border-bottom:1px solid var(--line)}
+  .setup-steps li:first-child{padding-top:0}
+  .setup-steps h3{margin:0 0 4px;font-size:17px}
+  .setup-steps h3 .k{font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--teal-deep);margin-right:8px}
+  @media (prefers-color-scheme: dark){ .setup-steps h3 .k{color:var(--teal)} }
+  .setup-steps p{margin:0;color:var(--muted);font-size:15px}
+  .terminal{
+    background:var(--code-bg);color:#dbe4dc;border-radius:var(--radius);overflow:hidden;
+    box-shadow:var(--shadow);border:1px solid var(--panel-line);
+  }
+  .terminal header{padding:11px 16px;border-bottom:1px solid var(--panel-line);font-size:13px;color:#8fa096;display:flex;gap:8px;align-items:center}
+  .terminal header i{width:10px;height:10px;border-radius:50%;background:#33413a;display:block}
+  .cmd{display:flex;gap:10px;align-items:flex-start;padding:13px 16px;border-bottom:1px solid #1b211c}
+  .cmd:last-child{border-bottom:0}
+  .cmd code{flex:1;font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.55;word-break:break-all}
+  .cmd code .prompt{color:#5eead4}
+  .cmd .out{display:block;color:#8fa096;font-size:12.5px;margin-top:3px}
+  .copy-btn{flex:none;background:#1b211c;border:1px solid #2a332d;color:#cbd5cd;border-radius:7px;padding:6px 10px;font:inherit;font-size:12.5px;cursor:pointer}
+  .copy-btn:hover{border-color:#14b8a6;color:#fff}
+  .check-card{margin-top:22px;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);padding:20px 22px}
+  .check-card h3{margin:0 0 6px;font-size:17px}
+  .check-card > p{margin:0 0 14px;color:var(--muted);font-size:15px}
+  .states{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+  .states li{display:flex;gap:11px;font-size:14.5px;line-height:1.5}
+  .states .mark{flex:none;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;margin-top:1px}
+  .states .bad .mark{background:#fee2e2;color:#991b1b}
+  .states .warn .mark{background:#fef3c7;color:#92400e}
+  .states .good .mark{background:#d1fae5;color:#065f46}
+  @media (prefers-color-scheme: dark){
+    .states .bad .mark{background:#450a0a;color:#fca5a5}
+    .states .warn .mark{background:#451a03;color:#fcd34d}
+    .states .good .mark{background:#064e3b;color:#a7f3d0}
+  }
+  .states b{display:block;font-size:14.5px}
+  .states span{color:var(--muted)}
+
+  /* Models */
+  .model-table{border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);overflow:hidden}
+  .model-row{display:grid;grid-template-columns:220px 1fr 200px;gap:0;border-bottom:1px solid var(--line)}
+  .model-row:last-child{border-bottom:0}
+  .model-row > div{padding:18px 22px}
+  .model-row > div + div{border-left:1px solid var(--line)}
+  .model-row code{font-family:"IBM Plex Mono",monospace;font-size:14.5px;font-weight:600}
+  .model-row p{margin:0;font-size:15px;color:var(--muted)}
+  .model-row p b{color:var(--ink)}
+  .model-note{margin-top:14px;font-size:14.5px;color:var(--muted)}
+
+  /* FAQ */
+  .faq{border-top:1px solid var(--line)}
+  .faq-item{border-bottom:1px solid var(--line)}
+  .faq-q{
+    width:100%;background:none;border:0;padding:20px 4px;display:flex;gap:16px;align-items:baseline;
+    text-align:left;font:inherit;font-size:17.5px;font-weight:600;color:var(--ink);cursor:pointer;letter-spacing:-.01em;
+  }
+  .faq-q .sign{margin-left:auto;flex:none;font-size:22px;font-weight:400;color:var(--muted);line-height:1}
+  .faq-a{display:none;padding:0 4px 22px;max-width:44rem;color:var(--muted);font-size:15.5px}
+  .faq-a p{margin:0 0 8px}
+  .faq-a p:last-child{margin-bottom:0}
+  .faq-a code{font-family:"IBM Plex Mono",monospace;font-size:13.5px;color:var(--ink);background:var(--surface-2);padding:1px 6px;border-radius:5px}
+  .faq-item.open .faq-a{display:block}
+  .faq-item.open .faq-q .sign{transform:rotate(45deg)}
+
+  /* Install CTA */
+  .cta-panel{
+    margin:64px 0 8px;background:var(--panel);color:#dbe4dc;border-radius:18px;
+    padding:clamp(28px,5vw,52px);display:grid;grid-template-columns:1.15fr .85fr;gap:36px;align-items:start;
+    border:1px solid var(--panel-line);box-shadow:var(--shadow);
+  }
+  .cta-panel h2{font-size:clamp(28px,3.4vw,38px);line-height:1.12;letter-spacing:-.025em;margin:0 0 12px;color:#fff}
+  .cta-panel p{color:#aab4ab;margin:0 0 20px;font-size:16.5px}
+  .cta-panel .btn{background:#0e7490;border-color:#0e7490}
+  .cta-panel .btn:hover{background:#0891b2;border-color:#0891b2}
+  .cta-panel .btn.ghost{background:transparent;border-color:#33413a;color:#e8ece7}
+  .cta-panel .btn.ghost:hover{border-color:#14b8a6;color:#fff}
+  .cta-steps{list-style:none;margin:0;padding:0;display:grid;gap:0}
+  .cta-steps li{padding:13px 0;border-bottom:1px solid #2a332d;font-size:15px}
+  .cta-steps li:last-child{border-bottom:0}
+  .cta-steps .mono{color:#5eead4;font-size:13.5px}
+  .cta-steps b{color:#fff}
+  .cta-note{margin-top:16px;font-size:13.5px;color:#8fa096}
+
+  footer{padding:36px 0 48px;border-top:1px solid var(--line);margin-top:64px}
+  .foot{display:flex;gap:24px;flex-wrap:wrap;align-items:baseline;justify-content:space-between;font-size:14px;color:var(--muted)}
+  .foot a{color:var(--ink);text-decoration:none}
+  .foot a:hover{text-decoration:underline}
+  .foot nav{display:flex;gap:18px;flex-wrap:wrap}
+
+  @media (max-width: 920px){
+    .hero-grid,.split,.setup-grid,.cta-panel{grid-template-columns:1fr}
+    .facts{grid-template-columns:1fr 1fr}
+    .fact:nth-child(3){border-left:0;padding-left:0}
+    .fact{border-top:1px solid var(--line)}
+    .fact:nth-child(-n+2){border-top:0}
+    .steps li{grid-template-columns:44px 1fr}
+    .steps .detail{grid-column:2}
+    .mode-row-item{grid-template-columns:1fr}
+    .mode-row-item > div + div{border-left:0;border-top:1px solid var(--line)}
+    .model-row{grid-template-columns:1fr}
+    .model-row > div + div{border-left:0;border-top:1px solid var(--line)}
+    nav.links{margin-left:0;gap:16px}
+    .nav-cta{margin-left:auto}
+  }
+  @media (max-width: 560px){
+    body{font-size:16px}
+    .hero{padding-top:38px}
+    .nav-inner{gap:10px;padding:10px 0}
+    nav.links{gap:14px}
+    nav.links a{font-size:14px}
+    .facts{grid-template-columns:1fr}
+    .fact{border-left:0;padding-left:0;border-top:1px solid var(--line)}
+    .fact:first-child{border-top:0}
+    .wordmark small{display:none}
+    .chat{min-height:260px}
+    section.block{padding:48px 0 4px}
+  }
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto}
+    *{transition:none !important}
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="wordmark" href="#top" aria-label="LocalNest home">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M3 12c3 4.5 6 6 9 6s6-1.5 9-6" stroke="#0f766e" stroke-width="2" stroke-linecap="round"/>
+        <path d="M5 9.5c2.5 3.5 4.5 4.5 7 4.5s4.5-1 7-4.5" stroke="#0f766e" stroke-width="2" stroke-linecap="round" opacity=".65"/>
+        <path d="M8 7.2c1.6 2 2.8 2.6 4 2.6s2.4-.6 4-2.6" stroke="#0f766e" stroke-width="2" stroke-linecap="round" opacity=".4"/>
+      </svg>
+      LocalNest <small>v0.9.17</small>
+    </a>
+    <nav class="links" aria-label="Page">
+      <a href="#how-it-works">How it works</a>
+      <a href="#modes">Modes</a>
+      <a href="#review">Review first</a>
+      <a href="#setup">Setup</a>
+      <a href="#faq">Questions</a>
+    </nav>
+    <a class="btn small nav-cta" href="#get">Get the extension</a>
+  </div>
+</header>
+
+<main id="main">
+<div id="top" class="wrap">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-grid">
+      <div>
+        <p class="version-pill"><span class="dot" aria-hidden="true"></span> <b>v0.9.17</b> · Ollama-only · No API key · No account</p>
+        <h1>AI that reads your project first. And changes <em>nothing</em> until you say so.</h1>
+        <p class="lede">LocalNest is a local-first AI coding agent in the Antigravity sidebar. It runs on models you pull with <strong>Ollama on your own computer</strong> — so your code never leaves your machine, and there is nothing to sign up for.</p>
+        <div class="cta-row">
+          <a class="btn" href="#get">Get LocalNest</a>
+          <a class="btn ghost" href="https://github.com/1nc24cs146-cmyk/Vyntra.git">View source on GitHub</a>
+        </div>
+        <p class="setup-line">To get going: install Ollama → <span class="mono">ollama pull llama3.2:3b</span> → open the LocalNest panel.</p>
+        <p class="hero-note"><b>Also known as Vyntra.</b> Inside the editor the panel and commands use the name “Vyntra Chat” — it is the same extension, by the same author.</p>
+      </div>
+
+      <!-- Interactive panel preview -->
+      <div>
+        <div class="panel-shell" aria-label="LocalNest panel preview">
+          <div class="panel-top">
+            <span class="tab-label">Chat</span>
+            <span class="pill-local">LOCAL</span>
+            <span class="spacer"></span>
+            <button class="icon-btn" type="button" id="refreshBtn" title="Refresh models" aria-label="Refresh models">↻</button>
+            <button class="icon-btn" type="button" id="newChatBtn" title="New chat" aria-label="New chat">＋</button>
+          </div>
+          <div class="mode-row" role="tablist" aria-label="Modes in preview">
+            <button class="mode-btn" type="button" role="tab" aria-selected="true" data-mode="ask">Ask</button>
+            <button class="mode-btn" type="button" role="tab" aria-selected="false" data-mode="plan">Plan</button>
+            <button class="mode-btn" type="button" role="tab" aria-selected="false" data-mode="agent">Agent</button>
+            <button class="mode-btn" type="button" role="tab" aria-selected="false" data-mode="build">Build</button>
+            <button class="fast-toggle" type="button" id="fastToggle" aria-pressed="false"><span>Fast</span><span class="switch" aria-hidden="true"></span></button>
+          </div>
+          <p class="status-line"><span class="ok">● Ollama online</span><span id="statusContext">llama3.2:3b · 4 workspace files in context</span></p>
+          <div class="chat" id="chatArea" aria-live="polite"></div>
+          <div class="panel-foot">
+            <span>Changes <b id="changesCount" style="color:#fff">0</b></span>
+            <span>Terminal <b style="color:#fff">0</b></span>
+            <span class="ready" id="readyLabel">Ready</span>
+          </div>
+          <div class="chips" aria-label="Context shortcuts">
+            <button class="chip" type="button" data-chip="@file ">@file</button>
+            <button class="chip" type="button" data-chip="@selection ">@selection</button>
+            <button class="chip" type="button" data-chip="@terminal ">@terminal</button>
+            <button class="chip" type="button" data-chip="@diagnostics ">@diagnostics</button>
+            <button class="chip" type="button" data-chip="@git ">@git</button>
+          </div>
+          <div class="composer">
+            <label for="demoInput">Type a task, question, or / for commands</label>
+            <textarea id="demoInput" rows="1" placeholder="Type a task, question, or / for commands…"></textarea>
+            <button class="send-btn" type="button" id="sendBtn">Send</button>
+          </div>
+        </div>
+        <p class="panel-caption">A preview of the panel. <b>Try the tabs</b> — each mode answers differently. Real answers come from your own Ollama model, inside Antigravity.</p>
+      </div>
+    </div>
+
+    <div class="facts" aria-label="LocalNest at a glance">
+      <div class="fact"><b>No cloud model</b><span>Only the Ollama host you choose, localhost by default.</span></div>
+      <div class="fact"><b>Workspace first</b><span>It indexes your files and picks the matching ones before answering.</span></div>
+      <div class="fact"><b>Approval before writes</b><span>Proposals are previewed. Nothing is written until you approve it.</span></div>
+      <div class="fact"><b>Undo built in</b><span>Original files are snapshotted, so an approved batch can be restored.</span></div>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <section class="block" id="how-it-works" aria-labelledby="how-heading">
+    <div class="section-head">
+      <span class="num">01 — HOW IT WORKS</span>
+      <h2 id="how-heading">Context before code, every single time</h2>
+      <p>LocalNest follows the same order for every question and every task. The model is never handed your question on its own — it is handed your question plus the files that match it.</p>
+    </div>
+    <ol class="steps">
+      <li>
+        <span class="n">1</span>
+        <div><h3>Open a project and ask</h3><p>Pick a mode — Ask, Plan, Agent, or Build — and type your question or task in the sidebar panel.</p></div>
+        <p class="detail">You can also select code and ask LocalNest to explain it, propose a diff-reviewed edit, or fix it from its diagnostics.</p>
+      </li>
+      <li>
+        <span class="n">2</span>
+        <div><h3>It inspects your workspace first</h3><p>Before it answers, it searches your indexed project files and picks the ones that match your question.</p></div>
+        <p class="detail">That context travels with the question to the model, so the answer is about <em>your</em> code — not generic code. In Fast mode it uses fewer files, so the first words arrive sooner.</p>
+      </li>
+      <li>
+        <span class="n">3</span>
+        <div><h3>Ask answers, Plan plans, Agent proposes</h3><p>Ask never touches a file. Plan writes only a plan. Agent prepares complete files as one proposal card — and writes nothing yet.</p></div>
+        <p class="detail">A plan lists the goal, the exact files to change, the risks, and how to check it worked. Happy with it? “Build this plan” moves it into Agent mode.</p>
+      </li>
+      <li>
+        <span class="n">4</span>
+        <div><h3>You review every change</h3><p>Each proposed file has a preview. Open it beside the editor, read the full version, then approve files one by one, approve them all, or discard the proposal.</p></div>
+        <p class="detail">Commands — installing packages, running tests — run only after you press “Run approved commands”. Dangerous commands are refused even if proposed.</p>
+      </li>
+      <li>
+        <span class="n">5</span>
+        <div><h3>It verifies after you approve</h3><p>Once files are approved, LocalNest checks them, runs the checks, and shows the output in the panel.</p></div>
+        <p class="detail">If something is still missing or broken, it proposes a fix through the same review and approval — repeating the verify-and-fix loop for up to 5 rounds.</p>
+      </li>
+      <li>
+        <span class="n">6</span>
+        <div><h3>You can always undo</h3><p>The original contents of every file are recorded before approval. “Undo last approved changes” restores edited files and deletes newly created ones from that batch.</p></div>
+        <p class="detail">Build mode works the same way for whole apps: describe a website or multi-file project, review the complete proposal, and only then let it be written.</p>
+      </li>
+    </ol>
+  </section>
+
+  <!-- MODES -->
+  <section class="block" id="modes" aria-labelledby="modes-heading">
+    <div class="section-head">
+      <span class="num">02 — MODES</span>
+      <h2 id="modes-heading">Four modes, one rule: no surprises</h2>
+      <p>The mode decides what LocalNest is allowed to do with your answer — and, just as importantly, what it is not allowed to do.</p>
+    </div>
+    <div class="modes">
+      <div class="mode-row-item">
+        <div><p class="mode-name">Ask<span>Questions, explanations</span></p></div>
+        <div><h4>It does</h4><p>Answers in the panel, grounded in the workspace files it found. Still searches your project even if no model is reachable.</p></div>
+        <div><h4>It never</h4><p class="dim">Changes a file. Ask is read-only by design.</p></div>
+      </div>
+      <div class="mode-row-item">
+        <div><p class="mode-name">Plan<span>Think before building</span></p></div>
+        <div><h4>It does</h4><p>Writes only a plan: goal, exact files to change, risks, and how to verify the result.</p></div>
+        <div><h4>It never</h4><p class="dim">Changes a file. A plan becomes work only when you choose “Build this plan”.</p></div>
+      </div>
+      <div class="mode-row-item">
+        <div><p class="mode-name">Agent<span>Multi-file changes</span></p></div>
+        <div><h4>It does</h4><p>Prepares a complete proposal — new and updated files in one card — then verifies the result after you approve.</p></div>
+        <div><h4>It never</h4><p class="dim">Writes anything before approval, or runs a command you have not approved.</p></div>
+      </div>
+      <div class="mode-row-item">
+        <div><p class="mode-name">Build<span>Whole apps</span></p></div>
+        <div><h4>It does</h4><p>Generates the complete files for a website, app, or larger multi-file project as one reviewable proposal. With no model reachable, it still creates a working app from a built-in template.</p></div>
+        <div><h4>It never</h4><p class="dim">Writes files without your approval.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REVIEW -->
+  <section class="block" id="review" aria-labelledby="review-heading">
+    <div class="section-head">
+      <span class="num">03 — REVIEW FIRST</span>
+      <h2 id="review-heading">Every change arrives as a proposal, not a fait accompli</h2>
+      <p>Try it: approve the proposal below, then undo it. That is exactly the control you keep inside Antigravity — including the snapshot that makes undo possible.</p>
+    </div>
+    <div class="split">
+      <div>
+        <p style="margin-top:0;color:var(--muted)">A proposal is a complete, readable set of files — not a patch you have to reconstruct in your head. You see what will be created, what will change, and what commands it wants to run, before any of it happens.</p>
+        <ul class="check-list">
+          <li><span class="tick" aria-hidden="true">✓</span><p><b>Preview before approval</b><span>Press View to open any proposed file beside the editor and read it in full.</span></p></li>
+          <li><span class="tick" aria-hidden="true">✓</span><p><b>Approve file by file, or all at once</b><span>Keep the parts you want. Discard the rest. Nothing is partial-written behind your back.</span></p></li>
+          <li><span class="tick" aria-hidden="true">✓</span><p><b>Commands need a second yes</b><span>Approved commands run only after you press “Run approved commands” — and dangerous ones are refused outright.</span></p></li>
+          <li><span class="tick" aria-hidden="true">✓</span><p><b>Snapshot, then undo</b><span>Original contents are recorded before approval, so one Undo restores the whole batch.</span></p></li>
+        </ul>
+      </div>
+      <div class="proposal" aria-label="Proposal preview">
+        <header>
+          <b>Proposal</b><span>2 files · Agent mode</span>
+          <span class="state" id="proposalState">Awaiting review</span>
+        </header>
+        <div class="file">
+          <div class="file-head"><code>src/server.py</code><span class="tag">Updated</span></div>
+          <pre><span class="ctx"> def handle_request(req):</span>
+<span class="add">+    if not req.user:
++        return error(401, "Sign in first")</span>
+<span class="ctx">     return process(req)</span></pre>
+        </div>
+        <div class="file">
+          <div class="file-head"><code>tests/test_auth.py</code><span class="tag">New file</span></div>
+          <pre><span class="add">+def test_anonymous_request_is_rejected():
++    assert handle_request(anon()).status == 401</span></pre>
+        </div>
+        <div class="proposal-actions">
+          <button type="button" class="primary" id="approveBtn">Approve all</button>
+          <button type="button" id="discardBtn">Discard</button>
+          <button type="button" id="undoBtn" disabled>Undo last approved changes</button>
+        </div>
+        <p class="proposal-note" id="proposalNote">Nothing has been written yet. This preview is the whole change.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SETUP -->
+  <section class="block" id="setup" aria-labelledby="setup-heading">
+    <div class="section-head">
+      <span class="num">04 — SETUP</span>
+      <h2 id="setup-heading">Three steps, then chat</h2>
+      <p>LocalNest does not install a model for you, and it does not download Ollama itself. It checks what is already on your machine and tells you plainly what is missing.</p>
+    </div>
+    <div class="setup-grid">
+      <div>
+        <ol class="setup-steps">
+          <li>
+            <h3><span class="k">1</span>Install Ollama</h3>
+            <p>Download Ollama for your system and run the installer. On Windows, restart Antigravity afterwards so the new terminal picks Ollama up. Choose “use Ollama locally” — no account is needed.</p>
+          </li>
+          <li>
+            <h3><span class="k">2</span>Pull a model</h3>
+            <p>Start Ollama, then pull whichever model you want. A small model is the fastest way to get a first answer; a coding model is the better choice for larger changes.</p>
+          </li>
+          <li>
+            <h3><span class="k">3</span>Open the panel and pick it</h3>
+            <p>Open LocalNest from the nest icon in the activity bar, or the Command Palette. The panel lists the models actually pulled on your machine — pick one and chat. Picking an installed model opens chat straight away.</p>
+          </li>
+        </ol>
+        <div class="terminal" aria-label="Setup commands">
+          <header><i></i><i></i><i></i><span>Terminal — copy any command</span></header>
+          <div class="cmd">
+            <code><span class="prompt">$</span> ollama serve<span class="out">Starts Ollama on http://localhost:11434</span></code>
+            <button class="copy-btn" type="button" data-copy="ollama serve">Copy</button>
+          </div>
+          <div class="cmd">
+            <code><span class="prompt">$</span> ollama pull llama3.2:3b<span class="out">Small and fast — a good first model (about 2 GB)</span></code>
+            <button class="copy-btn" type="button" data-copy="ollama pull llama3.2:3b">Copy</button>
+          </div>
+          <div class="cmd">
+            <code><span class="prompt">$</span> ollama pull qwen2.5-coder:7b<span class="out">Coding-focused — slower on CPU, stronger on code</span></code>
+            <button class="copy-btn" type="button" data-copy="ollama pull qwen2.5-coder:7b">Copy</button>
+          </div>
+          <div class="cmd">
+            <code><span class="prompt">$</span> ollama list<span class="out">Shows the models already downloaded on this machine</span></code>
+            <button class="copy-btn" type="button" data-copy="ollama list">Copy</button>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="check-card">
+          <h3>What LocalNest checks on first open</h3>
+          <p>It reads the system: is the <span class="mono">ollama</span> program there, is its server running, and which models are pulled? The panel re-checks every time you open it.</p>
+          <ul class="states">
+            <li class="bad"><span class="mark" aria-hidden="true">!</span><div><b>Ollama is not installed</b><span>“Install Ollama to continue”, with a button to the download page. No chat is faked in the meantime.</span></div></li>
+            <li class="warn"><span class="mark" aria-hidden="true">…</span><div><b>Installed, but not running</b><span>LocalNest tries to start an already-installed Ollama itself (auto-start is on by default). If that fails, it says to run <span class="mono">ollama serve</span>.</span></div></li>
+            <li class="warn"><span class="mark" aria-hidden="true">○</span><div><b>Running, but no model pulled</b><span>It stays on the model picker: pick a model, press Download, and chat opens when the download finishes.</span></div></li>
+            <li class="good"><span class="mark" aria-hidden="true">✓</span><div><b>A model is already there</b><span>It lists the models found and opens chat automatically — no setup step to get stuck on.</span></div></li>
+          </ul>
+        </div>
+        <div class="check-card">
+          <h3>Honest expectations on a laptop</h3>
+          <p style="margin-bottom:0">Ollama runs on CPU by default — no GPU setup is needed. The first answer after a download is the slowest, because the model has to load into memory. LocalNest keeps it loaded for 30 minutes, caps the context window, and uses all CPU threads, so later answers come sooner. On a laptop without a GPU, a 3B model will still take tens of seconds for a full answer. That is local CPU, not a failure — and <b>Fast</b> mode, with its smaller context, gets the first words out sooner.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODELS -->
+  <section class="block" aria-labelledby="models-heading">
+    <div class="section-head">
+      <span class="num">05 — MODELS</span>
+      <h2 id="models-heading">Your model, your choice</h2>
+      <p>There is no fixed model and no model list to subscribe to. If Ollama can pull it, LocalNest can use it.</p>
+    </div>
+    <div class="model-table">
+      <div class="model-row">
+        <div><code>llama3.2:3b</code></div>
+        <div><p><b>Start here for speed.</b> Small, general-purpose, and the fastest route to a working chat on a laptop without a GPU.</p></div>
+        <div><p>About 2 GB to download. First answer is slowest; later answers speed up while the model stays loaded.</p></div>
+      </div>
+      <div class="model-row">
+        <div><code>qwen2.5-coder:7b</code></div>
+        <div><p><b>Choose this for coding.</b> A coding-focused model, better suited to larger edits, plans, and agent tasks.</p></div>
+        <div><p>Heavier on CPU than a 3B model — expect slower answers in exchange for stronger code.</p></div>
+      </div>
+      <div class="model-row">
+        <div><code>Any Ollama model</code></div>
+        <div><p><b>Nothing is locked in.</b> Type the exact model name in the panel, or pick it from the list of models pulled on your machine.</p></div>
+        <div><p>Switching models is just picking another one you have already pulled.</p></div>
+      </div>
+    </div>
+    <p class="model-note">You can also point LocalNest at your own remote Ollama host instead of localhost, in Settings. Code then goes only to that host — still no cloud provider, no API key.</p>
+  </section>
+
+  <!-- FAQ -->
+  <section class="block" id="faq" aria-labelledby="faq-heading">
+    <div class="section-head">
+      <span class="num">06 — QUESTIONS</span>
+      <h2 id="faq-heading">Asked, answered plainly</h2>
+    </div>
+    <div class="faq">
+      <div class="faq-item">
+        <button class="faq-q" type="button" aria-expanded="false">Does LocalNest send my code to the cloud?<span class="sign" aria-hidden="true">+</span></button>
+        <div class="faq-a"><p>No. It sends code only to the Ollama host you configure — <code>http://localhost:11434</code> by default. There is no cloud model, no API key, and no account. If you point it at a remote Ollama host of your own, code goes only there.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" type="button" aria-expanded="false">Do I need a GPU?<span class="sign" aria-hidden="true">+</span></button>
+        <div class="faq-a"><p>No. Ollama runs on CPU by default and LocalNest has no GPU or CUDA settings. A GPU would make answers faster, but everything works without one — just more slowly, especially on the first answer.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" type="button" aria-expanded="false">What happens if Ollama is offline when I ask something?<span class="sign" aria-hidden="true">+</span></button>
+        <div class="faq-a"><p>LocalNest says so, plainly, instead of inventing an answer. Ask still searches your workspace and shows what it found; Build still creates a working app from a built-in template. Once Ollama is running and a model is pulled, the same question gets a model answer.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" type="button" aria-expanded="false">Why is it called Vyntra in some places?<span class="sign" aria-hidden="true">+</span></button>
+        <div class="faq-a"><p>LocalNest is the project name; Vyntra is the display name used inside the editor — for the panel, the commands, and the extension listing. The extension and the author, NitinKumar Hiremath, are the same either way.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" type="button" aria-expanded="false">Can it change my files without me noticing?<span class="sign" aria-hidden="true">+</span></button>
+        <div class="faq-a"><p>No. Files are written only after you approve a proposal, and commands run only after a separate approval. Dangerous commands are refused even when proposed, and every approved batch is snapshotted so it can be undone.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" type="button" aria-expanded="false">Is it free?<span class="sign" aria-hidden="true">+</span></button>
+        <div class="faq-a"><p>Yes. LocalNest is free, Ollama is free, and the models are free to pull and run locally. The only costs are the download size and the time your own machine spends answering.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GET -->
+  <section id="get" aria-labelledby="get-heading">
+    <div class="cta-panel">
+      <div>
+        <h2 id="get-heading">Get LocalNest in your sidebar</h2>
+        <p>Install the extension, pull a model, and ask your first question about your own project. If Ollama is not on your machine yet, install that first — LocalNest will tell you, and wait, rather than pretend.</p>
+        <div class="cta-row">
+          <a class="btn" href="https://ollama.com/download">Install Ollama first</a>
+          <a class="btn ghost" href="https://github.com/1nc24cs146-cmyk/Vyntra.git">Source on GitHub</a>
+        </div>
+        <p class="cta-note">Install it from a VSIX file via Extensions → Install from VSIX. The source, and the latest builds, are on GitHub.</p>
+      </div>
+      <ol class="cta-steps">
+        <li><b>1. Install Ollama</b> — from <span class="mono">ollama.com/download</span>, then restart Antigravity.</li>
+        <li><b>2. Pull a model</b> — <span class="mono">ollama pull llama3.2:3b</span> for speed, or a coding model for code.</li>
+        <li><b>3. Open LocalNest</b> — nest icon in the activity bar, or Command Palette → LocalNest: Open Chat.</li>
+        <li><b>4. Pick your model</b> — chat opens when the panel finds a model already pulled on your machine.</li>
+      </ol>
+    </div>
+  </section>
+
+</div>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <p style="margin:0">LocalNest (Vyntra) — developed by <b style="color:var(--ink)">NitinKumar Hiremath</b>. MIT licence. Runs entirely on your machine via Ollama.</p>
+    <nav aria-label="Footer">
+      <a href="https://github.com/1nc24cs146-cmyk/Vyntra.git">GitHub</a>
+      <a href="https://ollama.com/download">Ollama</a>
+      <a href="#setup">Setup</a>
+      <a href="#faq">Questions</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---- Panel preview: mode examples ---- */
+  var EXAMPLES = {
+    ask: {
+      user: "Where is authentication checked in this project?",
+      step: "Step 1 — Inspect workspace (context before code)",
+      body: "<p>Workspace: 21 files indexed. Top files used as context: <code>src/server.py</code>, <code>src/auth.py</code>, <code>tests/test_auth.py</code>.</p><p>Authentication is checked in <code>handle_request()</code> in <code>src/server.py</code>, which calls the check in <code>src/auth.py</code> before any route runs. Anonymous requests are rejected there — see the proposal in the Review section below.</p>"
+    },
+    plan: {
+      user: "Plan: add sign-in checks to every route",
+      step: "Plan — no files changed",
+      body: "<p><b>Goal:</b> reject anonymous requests on every route.</p><p><b>Files:</b> <code>src/server.py</code> (check first), <code>src/auth.py</code> (the check itself), <code>tests/test_auth.py</code> (new test).</p><p><b>Risks:</b> existing callers that rely on anonymous access. <b>Verify:</b> run the new test; it must return 401 for an anonymous request.</p><p>Happy with this? “Build this plan” moves it into Agent mode.</p>"
+    },
+    agent: {
+      user: "Add the sign-in check and a test for it",
+      step: "Step 1 — Inspect workspace, then a proposal",
+      body: "<p>Proposal prepared: 2 files — <code>src/server.py</code> updated, <code>tests/test_auth.py</code> created. Nothing has been written yet.</p><p>Review it in the panel, approve the files, then run the approved commands. After approval, LocalNest verifies the result and proposes a fix if the test still fails.</p>"
+    },
+    build: {
+      user: "Build a small landing page for this project",
+      step: "Build — complete files, one proposal",
+      body: "<p>Build prepared the complete files for the page as one proposal for review — markup, styles, and script together. Approve them and they are written; discard them and nothing changes.</p><p>With no model reachable, Build still creates a working page from a built-in template.</p>"
+    }
+  };
+
+  var chatArea = document.getElementById("chatArea");
+  var currentMode = "ask";
+  var fastOn = false;
+
+  function renderExample(){
+    var ex = EXAMPLES[currentMode];
+    chatArea.innerHTML = "";
+    var u = document.createElement("div");
+    u.className = "bubble user";
+    u.textContent = ex.user;
+    var a = document.createElement("div");
+    a.className = "bubble assistant";
+    var h = document.createElement("h4");
+    h.innerHTML = '<span class="step-tag">' + ex.step + "</span>";
+    var b = document.createElement("div");
+    b.innerHTML = ex.body;
+    a.appendChild(h);
+    a.appendChild(b);
+    chatArea.appendChild(u);
+    chatArea.appendChild(a);
+  }
+  renderExample();
+
+  var modeBtns = document.querySelectorAll(".mode-btn");
+  modeBtns.forEach(function(btn){
+    btn.addEventListener("click", function(){
+      modeBtns.forEach(function(b){ b.setAttribute("aria-selected", "false"); });
+      btn.setAttribute("aria-selected", "true");
+      currentMode = btn.getAttribute("data-mode");
+      renderExample();
+    });
+  });
+
+  var fastToggle = document.getElementById("fastToggle");
+  var statusContext = document.getElementById("statusContext");
+  fastToggle.addEventListener("click", function(){
+    fastOn = !fastOn;
+    fastToggle.setAttribute("aria-pressed", fastOn ? "true" : "false");
+    statusContext.textContent = fastOn
+      ? "llama3.2:3b · Fast on · 4 workspace files in context"
+      : "llama3.2:3b · 4 workspace files in context";
+  });
+
+  /* ---- @ chips ---- */
+  var input = document.getElementById("demoInput");
+  document.querySelectorAll(".chip").forEach(function(chip){
+    chip.addEventListener("click", function(){
+      input.value += chip.getAttribute("data-chip");
+      input.focus();
+    });
+  });
+
+  /* ---- Send: honest preview reply, never a faked answer ---- */
+  function sendDemo(){
+    var text = input.value.trim();
+    if(!text){ input.focus(); return; }
+    var u = document.createElement("div");
+    u.className = "bubble user";
+    u.textContent = text;
+    chatArea.appendChild(u);
+    var a = document.createElement("div");
+    a.className = "bubble assistant";
+    a.innerHTML = "<h4><span class=\"step-tag\">Preview — not a model answer</span></h4><p>This page is a preview. The real LocalNest answers inside Antigravity, using the Ollama model you pulled on your own computer — it inspects your workspace first, then answers about your code.</p><p>Follow the Setup steps below to get it running, then ask this same question in the panel.</p>";
+    chatArea.appendChild(a);
+    input.value = "";
+    input.focus();
+  }
+  document.getElementById("sendBtn").addEventListener("click", sendDemo);
+  input.addEventListener("keydown", function(e){
+    if(e.key === "Enter" && !e.shiftKey){ e.preventDefault(); sendDemo(); }
+  });
+  document.getElementById("newChatBtn").addEventListener("click", function(){
+    renderExample();
+    input.value = "";
+    input.focus();
+  });
+  document.getElementById("refreshBtn").addEventListener("click", function(){
+    document.getElementById("readyLabel").textContent = "Checked just now";
+    renderExample();
+  });
+
+  /* ---- Proposal demo ---- */
+  var stateEl = document.getElementById("proposalState");
+  var noteEl = document.getElementById("proposalNote");
+  var approveBtn = document.getElementById("approveBtn");
+  var discardBtn = document.getElementById("discardBtn");
+  var undoBtn = document.getElementById("undoBtn");
+  var changesCount = document.getElementById("changesCount");
+
+  approveBtn.addEventListener("click", function(){
+    stateEl.textContent = "Approved — 2 files written";
+    stateEl.className = "state approved";
+    noteEl.textContent = "Written after your approval. Original contents were snapshotted first, so this batch can be undone.";
+    undoBtn.disabled = false;
+    approveBtn.disabled = true;
+    discardBtn.disabled = true;
+    changesCount.textContent = "2";
+  });
+  discardBtn.addEventListener("click", function(){
+    stateEl.textContent = "Discarded — nothing written";
+    stateEl.className = "state discarded";
+    noteEl.textContent = "Discarded. No file was changed and no command ran.";
+    approveBtn.disabled = true;
+    discardBtn.disabled = true;
+  });
+  undoBtn.addEventListener("click", function(){
+    stateEl.textContent = "Undone — original files restored";
+    stateEl.className = "state";
+    noteEl.textContent = "The approved batch was undone: edited files restored, the new test file removed.";
+    undoBtn.disabled = true;
+    changesCount.textContent = "0";
+  });
+
+  /* ---- Copy buttons ---- */
+  document.querySelectorAll(".copy-btn").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      var text = btn.getAttribute("data-copy");
+      var done = function(){
+        var old = btn.textContent;
+        btn.textContent = "Copied";
+        setTimeout(function(){ btn.textContent = old; }, 1600);
+      };
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(done, function(){ fallbackCopy(text); done(); });
+      } else {
+        fallbackCopy(text); done();
+      }
+      function fallbackCopy(t){
+        var ta = document.createElement("textarea");
+        ta.value = t;
+        ta.style.position = "fixed"; ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        try{ document.execCommand("copy"); }catch(e){}
+        document.body.removeChild(ta);
+      }
+    });
+  });
+
+  /* ---- FAQ accordion ---- */
+  document.querySelectorAll(".faq-item").forEach(function(item){
+    var q = item.querySelector(".faq-q");
+    q.addEventListener("click", function(){
+      var open = item.classList.toggle("open");
+      q.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+  });
+})();
+</script>
+</body>
+</html>
