@@ -390,7 +390,7 @@
         <path d="M5 9.5c2.5 3.5 4.5 4.5 7 4.5s4.5-1 7-4.5" stroke="#0f766e" stroke-width="2" stroke-linecap="round" opacity=".65"/>
         <path d="M8 7.2c1.6 2 2.8 2.6 4 2.6s2.4-.6 4-2.6" stroke="#0f766e" stroke-width="2" stroke-linecap="round" opacity=".4"/>
       </svg>
-      LocalNest <small>v0.9.17</small>
+      LocalNest <small class="live-version">v0.9.19</small>
     </a>
     <nav class="links" aria-label="Page">
       <a href="#how-it-works">How it works</a>
@@ -410,7 +410,7 @@
   <div class="hero">
     <div class="hero-grid">
       <div>
-        <p class="version-pill"><span class="dot" aria-hidden="true"></span> <b>v0.9.17</b> · Ollama-only · No API key · No account</p>
+        <p class="version-pill"><span class="dot" aria-hidden="true"></span> <b class="live-version">v0.9.19</b> · Ollama-only · No API key · No account</p>
         <h1>AI that reads your project first. And changes <em>nothing</em> until you say so.</h1>
         <p class="lede">LocalNest is a local-first AI coding agent in the Antigravity sidebar. It runs on models you pull with <strong>Ollama on your own computer</strong> — so your code never leaves your machine, and there is nothing to sign up for.</p>
         <div class="dl-box" aria-label="Live download count">
@@ -797,6 +797,12 @@
       .then(function(d){
         if (d && typeof d.downloadCount === "number") {
           el.textContent = d.downloadCount.toLocaleString("en-IN");
+        }
+        // Version, too: whenever a new version is published to Open VSX,
+        // the header and hero update themselves — no website edit needed.
+        if (d && typeof d.version === "string" && d.version) {
+          var vers = document.querySelectorAll(".live-version");
+          for (var i = 0; i < vers.length; i++) { vers[i].textContent = "v" + d.version; }
         }
       })
       .catch(function(){ /* keep the last checked count visible */ });
