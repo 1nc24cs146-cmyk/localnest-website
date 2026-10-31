@@ -416,7 +416,7 @@
           <a class="btn" href="#get">Get LocalNest</a>
           <a class="btn ghost" href="https://github.com/1nc24cs146-cmyk/Vyntra.git">View source on GitHub</a>
         </div>
-        <p class="setup-line">To get going: install Ollama → <span class="mono">ollama pull llama3.2:3b</span> → open the LocalNest panel.</p>
+        <p class="setup-line">To get going: install Ollama → pick any Ollama model in the panel (see <a href="#models">Models</a>) → open the LocalNest panel.</p>
         <p class="hero-note"><b>Also known as Vyntra.</b> Inside the editor the panel and commands use the name “Vyntra Chat” — it is the same extension, by the same author.</p>
       </div>
 
@@ -623,6 +623,22 @@
             <button class="copy-btn" type="button" data-copy="ollama pull qwen2.5-coder:7b">Copy</button>
           </div>
           <div class="cmd">
+            <code><span class="prompt">$</span> ollama pull mistral:7b<span class="out">General-purpose 7B — a balanced all-round choice</span></code>
+            <button class="copy-btn" type="button" data-copy="ollama pull mistral:7b">Copy</button>
+          </div>
+          <div class="cmd">
+            <code><span class="prompt">$</span> ollama pull phi3:mini<span class="out">Very small and fast — good on a weaker laptop</span></code>
+            <button class="copy-btn" type="button" data-copy="ollama pull phi3:mini">Copy</button>
+          </div>
+          <div class="cmd">
+            <code><span class="prompt">$</span> ollama pull codellama:7b<span class="out">Code-focused, from the Llama family</span></code>
+            <button class="copy-btn" type="button" data-copy="ollama pull codellama:7b">Copy</button>
+          </div>
+          <div class="cmd">
+            <code><span class="prompt">$</span> ollama pull llama3.1:8b<span class="out">Larger general model — strongest here, slowest on CPU</span></code>
+            <button class="copy-btn" type="button" data-copy="ollama pull llama3.1:8b">Copy</button>
+          </div>
+          <div class="cmd">
             <code><span class="prompt">$</span> ollama list<span class="out">Shows the models already downloaded on this machine</span></code>
             <button class="copy-btn" type="button" data-copy="ollama list">Copy</button>
           </div>
@@ -648,11 +664,11 @@
   </section>
 
   <!-- MODELS -->
-  <section class="block" aria-labelledby="models-heading">
+  <section class="block" id="models" aria-labelledby="models-heading">
     <div class="section-head">
       <span class="num">05 — MODELS</span>
       <h2 id="models-heading">Your model, your choice</h2>
-      <p>There is no fixed model and no model list to subscribe to. If Ollama can pull it, LocalNest can use it.</p>
+      <p>There is no fixed model and no model list to subscribe to. The panel shows these 6 popular free models by default, plus any model you have already pulled — and if Ollama can pull it, LocalNest can use it.</p>
     </div>
     <div class="model-table">
       <div class="model-row">
@@ -664,6 +680,26 @@
         <div><code>qwen2.5-coder:7b</code></div>
         <div><p><b>Choose this for coding.</b> A coding-focused model, better suited to larger edits, plans, and agent tasks.</p></div>
         <div><p>Heavier on CPU than a 3B model — expect slower answers in exchange for stronger code.</p></div>
+      </div>
+      <div class="model-row">
+        <div><code>mistral:7b</code></div>
+        <div><p><b>Balanced all-rounder.</b> General-purpose 7B model, good for questions, writing, and everyday coding tasks.</p></div>
+        <div><p>Mid-weight on CPU — slower than 3B models, faster than 8B models.</p></div>
+      </div>
+      <div class="model-row">
+        <div><code>phi3:mini</code></div>
+        <div><p><b>Smallest and fastest.</b> A tiny model that runs comfortably on a weaker laptop, for quick questions.</p></div>
+        <div><p>Fastest answers here, but less capable on large, complex code changes.</p></div>
+      </div>
+      <div class="model-row">
+        <div><code>codellama:7b</code></div>
+        <div><p><b>Code-focused, Llama family.</b> Built for code generation and editing, a good alternative coding model.</p></div>
+        <div><p>Similar CPU cost to other 7B models.</p></div>
+      </div>
+      <div class="model-row">
+        <div><code>llama3.1:8b</code></div>
+        <div><p><b>Larger general model.</b> The strongest general model in the panel's default list, for harder questions.</p></div>
+        <div><p>Heaviest here — slowest on a laptop CPU, best reserved for a stronger machine.</p></div>
       </div>
       <div class="model-row">
         <div><code>Any Ollama model</code></div>
@@ -722,7 +758,7 @@
       </div>
       <ol class="cta-steps">
         <li><b>1. Install Ollama</b> — from <span class="mono">ollama.com/download</span>, then restart Antigravity.</li>
-        <li><b>2. Pull a model</b> — <span class="mono">ollama pull llama3.2:3b</span> for speed, or a coding model for code.</li>
+        <li><b>2. Pull a model</b> — any model from the Models section above, e.g. <span class="mono">ollama pull llama3.2:3b</span> for speed or <span class="mono">ollama pull qwen2.5-coder:7b</span> for code.</li>
         <li><b>3. Open LocalNest</b> — nest icon in the activity bar, or Command Palette → LocalNest: Open Chat.</li>
         <li><b>4. Pick your model</b> — chat opens when the panel finds a model already pulled on your machine.</li>
       </ol>
