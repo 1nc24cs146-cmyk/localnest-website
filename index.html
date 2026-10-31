@@ -108,6 +108,11 @@
   .setup-line{margin-top:18px;font-size:14.5px;color:var(--muted)}
   .setup-line .mono{font-size:13.5px;color:var(--ink);background:var(--surface-2);padding:2px 7px;border-radius:6px}
   .hero-note{margin-top:26px;border-top:1px solid var(--line);padding-top:16px;font-size:14.5px;color:var(--muted);max-width:34rem}
+  .dl-stats{margin:22px 0 0;font-size:15px;color:var(--muted)}
+  .dl-number{font-size:28px;font-weight:800;color:var(--ink);letter-spacing:-.02em}
+  .dl-label{color:var(--ink);font-weight:600}
+  .dl-live{font-size:13px}
+  .dl-link{margin-left:8px;color:var(--teal);font-weight:600;text-decoration:none}
   .hero-note b{color:var(--ink)}
 
   /* ---------- Editor panel (live demo) ---------- */
@@ -404,6 +409,7 @@
         <p class="version-pill"><span class="dot" aria-hidden="true"></span> <b>v0.9.17</b> · Ollama-only · No API key · No account</p>
         <h1>AI that reads your project first. And changes <em>nothing</em> until you say so.</h1>
         <p class="lede">LocalNest is a local-first AI coding agent in the Antigravity sidebar. It runs on models you pull with <strong>Ollama on your own computer</strong> — so your code never leaves your machine, and there is nothing to sign up for.</p>
+        <p class="dl-stats"><span class="dl-number" id="downloadCount">1,570</span> <span class="dl-label">downloads on Open VSX</span> <span class="dl-live" id="downloadLive">· live count</span> <a class="dl-link" href="https://open-vsx.org/extension/localnest/localnest-antigravity">See it on Open VSX →</a></p>
         <div class="cta-row">
           <a class="btn" href="#get">Get LocalNest</a>
           <a class="btn ghost" href="https://github.com/1nc24cs146-cmyk/Vyntra.git">View source on GitHub</a>
@@ -736,6 +742,26 @@
   </div>
 </footer>
 
+<script>
+(function(){
+  "use strict";
+  // Live download count, straight from Open VSX — no hard-coded number.
+  // If the fetch fails (offline, blocked), the last checked count stays visible.
+  var el = document.getElementById("downloadCount");
+  var live = document.getElementById("downloadLive");
+  if (el) {
+    fetch("https://open-vsx.org/api/localnest/localnest-antigravity")
+      .then(function(r){ if (!r.ok) { throw new Error("Open VSX " + r.status); } return r.json(); })
+      .then(function(d){
+        if (d && typeof d.downloadCount === "number") {
+          el.textContent = d.downloadCount.toLocaleString("en-IN");
+          if (live) { live.textContent = "· live, just fetched"; }
+        }
+      })
+      .catch(function(){ if (live) { live.textContent = "· last checked 31 Oct 2026"; } });
+  }
+})();
+</script>
 <script>
 (function(){
   "use strict";
