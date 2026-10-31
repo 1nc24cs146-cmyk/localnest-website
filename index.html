@@ -463,6 +463,10 @@
           </div>
         </div>
         <p class="panel-caption">A preview of the panel. <b>Try the tabs</b> — each mode answers differently. Real answers come from your own Ollama model, inside Antigravity.</p>
+        <div class="dl-box" aria-label="Live download count">
+          <div class="dl-main"><span class="dl-icon" aria-hidden="true">⬇</span><div><div><span class="dl-number">1,570</span> <span class="dl-label">downloads on Antigravity</span></div><p class="dl-sub">People using LocalNest in Antigravity, right now and counting</p></div></div>
+          <span class="dl-live"><span class="dl-dot" aria-hidden="true"></span> LIVE</span>
+        </div>
       </div>
     </div>
 
@@ -790,13 +794,13 @@
   "use strict";
   // Live download count, straight from Open VSX — no hard-coded number.
   // If the fetch fails (offline, blocked), the last checked count stays visible.
-  var el = document.getElementById("downloadCount");
-  if (el) {
+  var els = document.querySelectorAll(".dl-number");
+  if (els.length) {
     fetch("https://open-vsx.org/api/localnest/localnest-antigravity")
       .then(function(r){ if (!r.ok) { throw new Error("Open VSX " + r.status); } return r.json(); })
       .then(function(d){
         if (d && typeof d.downloadCount === "number") {
-          el.textContent = d.downloadCount.toLocaleString("en-IN");
+          for (var j = 0; j < els.length; j++) { els[j].textContent = d.downloadCount.toLocaleString("en-IN"); }
         }
         // Version, too: whenever a new version is published to Open VSX,
         // the header and hero update themselves — no website edit needed.
