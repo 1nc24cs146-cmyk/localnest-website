@@ -123,6 +123,9 @@
   .dl-main{display:flex;align-items:center;gap:14px}
   .dl-icon{width:46px;height:46px;flex:none;display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff;background:var(--teal-deep);border-radius:12px}
   .dl-number{font-size:34px;font-weight:800;color:var(--ink);letter-spacing:-.02em}
+  .update-banner{position:fixed;top:0;left:0;right:0;z-index:999;background:#0f172a;color:#fff;text-align:center;padding:10px 16px;font-size:14px}
+  .update-banner[hidden]{display:none}
+  .update-banner button{margin-left:10px;background:#fff;color:#0f172a;border:0;border-radius:99px;padding:4px 14px;font-weight:700;cursor:pointer}
   .dl-label{color:var(--ink);font-weight:700;font-size:17px}
   .dl-sub{margin:2px 0 0;font-size:13.5px;color:var(--muted)}
   .dl-live{flex:none;display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:800;letter-spacing:.08em;color:var(--teal-deep);background:color-mix(in srgb,var(--teal) 14%,var(--bg));border:1px solid var(--teal);border-radius:99px;padding:6px 10px}
@@ -392,6 +395,7 @@
 </style>
 </head>
 <body>
+<div id="update-banner" class="update-banner" hidden><span id="update-banner-text"></span><button type="button" id="update-banner-btn">Refresh now</button></div>
 
 <header class="nav">
   <div class="wrap nav-inner">
@@ -807,9 +811,22 @@
   "use strict";
   // Live download count, straight from Open VSX — no hard-coded number.
   // If the fetch fails (offline, blocked), the last checked count stays visible.
+  // Self-updating page: the check runs on every load and every 5 minutes
+  // after. If a newer extension version is out than the one baked into this
+  // page, the page refreshes itself past the browser cache — no manual hard
+  // refresh needed. Keep EMBEDDED_VERSION in sync with the .live-version pills.
+  var EMBEDDED_VERSION = "0.9.25";
+  var banner = document.getElementById("update-banner");
+  var bannerText = document.getElementById("update-banner-text");
+  var bannerBtn = document.getElementById("update-banner-btn");
+  function hardRefresh() {
+    location.replace(location.pathname + "?v=" + Date.now() + location.hash);
+  }
+  if (bannerBtn) { bannerBtn.addEventListener("click", hardRefresh); }
+  function checkForUpdate() {
   var els = document.querySelectorAll(".dl-number");
   if (els.length) {
-    fetch("https://open-vsx.org/api/localnest/localnest-antigravity")
+    fetch("https://open-vsx.org/api/localnest/localnest-antigravity", { cache: "no-store" })
       .then(function(r){ if (!r.ok) { throw new Error("Open VSX " + r.status); } return r.json(); })
       .then(function(d){
         if (d && typeof d.downloadCount === "number") {
@@ -820,10 +837,24 @@
         if (d && typeof d.version === "string" && d.version) {
           var vers = document.querySelectorAll(".live-version");
           for (var i = 0; i < vers.length; i++) { vers[i].textContent = "v" + d.version; }
+          if (d.version !== EMBEDDED_VERSION) {
+            if (bannerText) { bannerText.textContent = "A new version of LocalNest is out (v" + d.version + ") — this page is refreshing to it."; }
+            if (banner) { banner.hidden = false; }
+            try {
+              var key = "autoRefreshFor:" + d.version;
+              if (!sessionStorage.getItem(key)) {
+                sessionStorage.setItem(key, "1");
+                setTimeout(hardRefresh, 1500);
+              }
+            } catch (e) { /* storage unavailable: banner stays, no auto reload */ }
+          } else if (banner) { banner.hidden = true; }
         }
       })
       .catch(function(){ /* keep the last checked count visible */ });
   }
+  }
+  checkForUpdate();
+  setInterval(checkForUpdate, 5 * 60 * 1000);
 })();
 </script>
 <script>
