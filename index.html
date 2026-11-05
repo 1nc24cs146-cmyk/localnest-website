@@ -401,6 +401,7 @@
     </a>
     <nav class="links" aria-label="Page">
       <a href="#how-it-works">How it works</a>
+      <a href="#whats-new">What&rsquo;s new</a>
       <a href="#modes">Modes</a>
       <a href="#review">Review first</a>
       <a href="#setup">Setup</a>
@@ -481,6 +482,47 @@
       <div class="fact"><b>Undo built in</b><span>Original files are snapshotted, so an approved batch can be restored.</span></div>
     </div>
   </div>
+
+  <!-- WHAT'S NEW -->
+  <section class="block" id="whats-new" aria-labelledby="whats-new-heading">
+    <div class="section-head">
+      <span class="num">NEW IN v0.9.32</span>
+      <h2 id="whats-new-heading">What&rsquo;s new in LocalNest</h2>
+      <p>Everything added since the first version is in the extension — and now it is on this page too. The version pill above updates itself from Open VSX, so the number is never the only thing that is current.</p>
+    </div>
+    <div class="modes">
+      <div class="mode-row-item">
+        <div><p class="mode-name">Saved chats<span>Past chats, at the top</span></p></div>
+        <div><h4>It does</h4><p>Every thread is saved automatically. Past chats sits at the top of the panel — tap any chat to reopen it in full, rename it, search it, or delete it. New chat keeps the old ones.</p></div>
+        <div><h4>It never</h4><p class="dim">Loses a thread when you close the panel. Reopening the panel replays your current chat.</p></div>
+      </div>
+      <div class="mode-row-item">
+        <div><p class="mode-name">Context meter<span>Tokens, in plain sight</span></p></div>
+        <div><h4>It does</h4><p>A live &ldquo;Context used&rdquo; bar shows tokens used out of the model&rsquo;s window, turning amber, then red, as it fills. When older messages are trimmed, they are summarised and kept — never dropped silently.</p></div>
+        <div><h4>It never</h4><p class="dim">Truncates your history without telling you. A Context note appears when trimming happens.</p></div>
+      </div>
+      <div class="mode-row-item">
+        <div><p class="mode-name">Your own skills &amp; rules<span>Slash skills, custom ones too</span></p></div>
+        <div><h4>It does</h4><p>Nine built-in slash skills — /review /test /fix /explain /docs /refactor /commit /security /summarize — plus your own: drop a file in <code>.localnest/skills/&lt;name&gt;.md</code> and <code>/&lt;name&gt;</code> runs it. Project rules from <code>.localnest/rules.md</code> or <code>AGENTS.md</code> are followed in every answer.</p></div>
+        <div><h4>It never</h4><p class="dim">Sends your rules or skills anywhere. They are read from your project, on your machine.</p></div>
+      </div>
+      <div class="mode-row-item">
+        <div><p class="mode-name">Learned answers<span>Teach it once, it remembers</span></p></div>
+        <div><h4>It does</h4><p>Teach a question + answer with <code>/learn &lt;question&gt; | &lt;answer&gt;</code>, or just type <code>Q: … A: …</code>. Correcting a wrong answer with &ldquo;No, the correct answer is …&rdquo; stores that too. Next time a similar question comes up, your learned answer is used first, before the model guesses.</p></div>
+        <div><h4>It never</h4><p class="dim">Forgets what you taught it when you close the panel. See them with <code>/learned</code>, forget one with <code>/forget-learned</code>.</p></div>
+      </div>
+      <div class="mode-row-item">
+        <div><p class="mode-name">Regenerate &amp; copy<span>Second chances, one tap</span></p></div>
+        <div><h4>It does</h4><p><b>Regenerate</b> re-asks your last question without duplicating it in history. <b>Copy last answer</b> copies the last real reply, not the stats footer. &ldquo;View (review)&rdquo; on an existing file opens a real diff — current file on the left, proposal on the right — and Approve turns into &ldquo;Approved ✓&rdquo;.</p></div>
+        <div><h4>It never</h4><p class="dim">Hides whether a file was approved. A successful write is visible in the proposal box itself.</p></div>
+      </div>
+      <div class="mode-row-item">
+        <div><p class="mode-name">Works in all situations<span>Hardened, not just happy-path</span></p></div>
+        <div><h4>It does</h4><p>Offline, Build still works from templates. A model that was never pulled is retried with one you did pull. No folder open means a preview-only warning and a visible error on Approve, not a silent fail. A broken file format gets a plain warning, and nothing half-written is left behind.</p></div>
+        <div><h4>It never</h4><p class="dim">Writes outside your project, or runs a destructive command — <code>rm -rf /</code>, <code>format C:</code> and the like are refused in every mode.</p></div>
+      </div>
+    </div>
+  </section>
 
   <!-- HOW IT WORKS -->
   <section class="block" id="how-it-works" aria-labelledby="how-heading">
@@ -565,7 +607,7 @@
       <div>
         <p style="margin-top:0;color:var(--muted)">A proposal is a complete, readable set of files — not a patch you have to reconstruct in your head. You see what will be created, what will change, and what commands it wants to run, before any of it happens.</p>
         <ul class="check-list">
-          <li><span class="tick" aria-hidden="true">✓</span><p><b>Preview before approval</b><span>Press View to open any proposed file beside the editor and read it in full.</span></p></li>
+          <li><span class="tick" aria-hidden="true">✓</span><p><b>Preview before approval</b><span>Press View to open any proposed file beside the editor and read it in full — a real diff for an existing file, the full file for a new one.</span></p></li>
           <li><span class="tick" aria-hidden="true">✓</span><p><b>Approve file by file, or all at once</b><span>Keep the parts you want. Discard the rest. Nothing is partial-written behind your back.</span></p></li>
           <li><span class="tick" aria-hidden="true">✓</span><p><b>Commands need a second yes</b><span>Approved commands run only after you press “Run approved commands” — and dangerous ones are refused outright.</span></p></li>
           <li><span class="tick" aria-hidden="true">✓</span><p><b>Snapshot, then undo</b><span>Original contents are recorded before approval, so one Undo restores the whole batch.</span></p></li>
