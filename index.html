@@ -397,7 +397,7 @@
   <div class="wrap nav-inner">
     <a class="wordmark" href="#top" aria-label="LocalNest home">
       <img src="logo.svg" width="28" height="28" alt="LocalNest logo — the same logo as in Antigravity" style="border-radius:7px;flex:none" />
-      LocalNest <small class="live-version">v0.9.32</small>
+      LocalNest <small class="live-version">v0.9.35</small>
     </a>
     <nav class="links" aria-label="Page">
       <a href="#how-it-works">How it works</a>
@@ -420,7 +420,7 @@
     <div class="hero-3d" aria-hidden="true"><span class="c1"></span><span class="c2"></span><span class="c3"></span></div>
     <div class="hero-grid">
       <div>
-        <p class="version-pill"><span class="dot" aria-hidden="true"></span> <b class="live-version">v0.9.32</b> · Ollama-only · No API key · No account</p>
+        <p class="version-pill"><span class="dot" aria-hidden="true"></span> <b class="live-version">v0.9.35</b> · Ollama-only · No API key · No account</p>
         <h1>AI that reads your project first. And changes <em>nothing</em> until you say so.</h1>
         <p class="lede">LocalNest is a AI coding agent for Antigravity. It runs on models you pull with <strong>Ollama on your own computer</strong> — so your code never leaves your machine, and there is nothing to sign up for.</p>
         <div class="cta-row">
@@ -486,11 +486,21 @@
   <!-- WHAT'S NEW -->
   <section class="block" id="whats-new" aria-labelledby="whats-new-heading">
     <div class="section-head">
-      <span class="num">NEW IN v0.9.32</span>
+      <span class="num">NEW IN v0.9.35</span>
       <h2 id="whats-new-heading">What&rsquo;s new in LocalNest</h2>
       <p>Everything added since the first version is in the extension — and now it is on this page too. The version pill above updates itself from Open VSX, so the number is never the only thing that is current.</p>
     </div>
     <div class="modes">
+      <div class="mode-row-item">
+        <div><p class="mode-name">Trained for all 15 languages<span>v0.9.33 — every language, its own rules</span></p></div>
+        <div><h4>It does</h4><p>Python, Java, Go, Rust, C, C++, Kotlin, Swift, TypeScript, JavaScript, PHP, Ruby, C#, SQL and HTML/CSS/JS — each with its own rules for the model: idioms, project files, run and test commands, and the libraries to prefer, like Flask/Django/FastAPI for Python, Spring Boot/JUnit for Java, and React/Express/Jest for JavaScript.</p></div>
+        <div><h4>It never</h4><p class="dim">Mistakes JavaScript for Java again — &ldquo;react javascript app&rdquo; is now detected as JavaScript, not Java.</p></div>
+      </div>
+      <div class="mode-row-item">
+        <div><p class="mode-name">Real-world problems<span>v0.9.35 — the real thing, not a toy</span></p></div>
+        <div><h4>It does</h4><p>Ask for a REST API, a login system, a shop, a report or a dashboard and it builds that: requirements first, edge cases and invalid input handled, proper errors, data persisted, pagination on lists, logging, a runnable test, and a README with run and deploy steps.</p></div>
+        <div><h4>It never</h4><p class="dim">Answers a real-world request with a hello-world starter. A toy example is never the answer to a real problem.</p></div>
+      </div>
       <div class="mode-row-item">
         <div><p class="mode-name">Saved chats<span>Past chats, at the top</span></p></div>
         <div><h4>It does</h4><p>Every thread is saved automatically. Past chats sits at the top of the panel — tap any chat to reopen it in full, rename it, search it, or delete it. New chat keeps the old ones.</p></div>
@@ -854,7 +864,7 @@
   // banner, no reload. A pill only ever moves forward: if the listing is
   // behind this page, the page keeps its own version. Keep EMBEDDED_VERSION
   // in sync with the .live-version pills.
-  var EMBEDDED_VERSION = "0.9.32";
+  var EMBEDDED_VERSION = "0.9.35";
   function isNewer(a, b) {
     var pa = String(a).split(".");
     var pb = String(b).split(".");
