@@ -397,7 +397,7 @@
   <div class="wrap nav-inner">
     <a class="wordmark" href="#top" aria-label="LocalNest home">
       <img src="logo.svg" width="28" height="28" alt="LocalNest logo — the same logo as in Antigravity" style="border-radius:7px;flex:none" />
-      LocalNest <small class="live-version">v0.9.35</small>
+      LocalNest <small class="live-version">v0.9.36</small>
     </a>
     <nav class="links" aria-label="Page">
       <a href="#how-it-works">How it works</a>
@@ -420,7 +420,7 @@
     <div class="hero-3d" aria-hidden="true"><span class="c1"></span><span class="c2"></span><span class="c3"></span></div>
     <div class="hero-grid">
       <div>
-        <p class="version-pill"><span class="dot" aria-hidden="true"></span> <b class="live-version">v0.9.35</b> · Ollama-only · No API key · No account</p>
+        <p class="version-pill"><span class="dot" aria-hidden="true"></span> <b class="live-version">v0.9.36</b> · Ollama-only · No API key · No account</p>
         <h1>AI that reads your project first. And changes <em>nothing</em> until you say so.</h1>
         <p class="lede">LocalNest is a AI coding agent for Antigravity. It runs on models you pull with <strong>Ollama on your own computer</strong> — so your code never leaves your machine, and there is nothing to sign up for.</p>
         <div class="cta-row">
@@ -469,7 +469,7 @@
         </div>
         <p class="panel-caption">A preview of the panel. <b>Try the tabs</b> — each mode answers differently. Real answers come from your own Ollama model, inside Antigravity.</p>
         <div class="dl-box" aria-label="Live download count">
-          <div class="dl-main"><span class="dl-icon" aria-hidden="true">⬇</span><div><div><span class="dl-number">2,806</span> <span class="dl-label">downloads on Antigravity</span></div><p class="dl-sub">People using LocalNest in Antigravity, right now and counting</p></div></div>
+          <div class="dl-main"><span class="dl-icon" aria-hidden="true">⬇</span><div><div><span class="dl-number">3,748</span> <span class="dl-label">downloads on Antigravity</span></div><p class="dl-sub">People using LocalNest in Antigravity, right now and counting</p></div></div>
           <span class="dl-live"><span class="dl-dot" aria-hidden="true"></span> LIVE</span>
         </div>
       </div>
@@ -486,11 +486,21 @@
   <!-- WHAT'S NEW -->
   <section class="block" id="whats-new" aria-labelledby="whats-new-heading">
     <div class="section-head">
-      <span class="num">NEW IN v0.9.35</span>
+      <span class="num">NEW IN v0.9.36</span>
       <h2 id="whats-new-heading">What&rsquo;s new in LocalNest</h2>
       <p>Everything added since the first version is in the extension — and now it is on this page too. The version pill above updates itself from Open VSX, so the number is never the only thing that is current.</p>
     </div>
     <div class="modes">
+      <div class="mode-row-item">
+        <div><p class="mode-name">Auto-fix diagnostics<span>v0.9.36 — fixes proposed, you approve</span></p></div>
+        <div><h4>It does</h4><p>Type <code>/autofix</code> and LocalNest reads the diagnostics for your current file — or <code>/autofix all</code> for the whole workspace — errors first, and proposes fixes as reviewable diffs through the normal proposal flow. Known diagnostics get a plain hint; unknown ones get no invented guess. It works even with Ollama down.</p></div>
+        <div><h4>It never</h4><p class="dim">Applies a fix on its own. Nothing is written until you approve it, like every other change.</p></div>
+      </div>
+      <div class="mode-row-item">
+        <div><p class="mode-name">Codebase Q&amp;A<span>v0.9.36 — answers from your actual files</span></p></div>
+        <div><h4>It does</h4><p>Ask <code>/qa</code> where something is defined or how it works, and the answer is grounded in your actual files — definitions and usages with file:line citations, shown before the model answers. Plain questions about your code are detected without the slash, too.</p></div>
+        <div><h4>It never</h4><p class="dim">Guesses from nothing. When nothing in your project matches, it says so plainly.</p></div>
+      </div>
       <div class="mode-row-item">
         <div><p class="mode-name">Trained for all 15 languages<span>v0.9.33 — every language, its own rules</span></p></div>
         <div><h4>It does</h4><p>Python, Java, Go, Rust, C, C++, Kotlin, Swift, TypeScript, JavaScript, PHP, Ruby, C#, SQL and HTML/CSS/JS — each with its own rules for the model: idioms, project files, run and test commands, and the libraries to prefer, like Flask/Django/FastAPI for Python, Spring Boot/JUnit for Java, and React/Express/Jest for JavaScript.</p></div>
@@ -864,7 +874,7 @@
   // banner, no reload. A pill only ever moves forward: if the listing is
   // behind this page, the page keeps its own version. Keep EMBEDDED_VERSION
   // in sync with the .live-version pills.
-  var EMBEDDED_VERSION = "0.9.35";
+  var EMBEDDED_VERSION = "0.9.36";
   function isNewer(a, b) {
     var pa = String(a).split(".");
     var pb = String(b).split(".");
