@@ -397,7 +397,7 @@
   <div class="wrap nav-inner">
     <a class="wordmark" href="#top" aria-label="LocalNest home">
       <img src="logo.svg" width="28" height="28" alt="LocalNest logo — the same logo as in Antigravity" style="border-radius:7px;flex:none" />
-      LocalNest <small class="live-version">v0.9.39</small>
+      LocalNest <small class="live-version">v0.9.40</small>
     </a>
     <nav class="links" aria-label="Page">
       <a href="#how-it-works">How it works</a>
@@ -420,7 +420,7 @@
     <div class="hero-3d" aria-hidden="true"><span class="c1"></span><span class="c2"></span><span class="c3"></span></div>
     <div class="hero-grid">
       <div>
-        <p class="version-pill"><span class="dot" aria-hidden="true"></span> <b class="live-version">v0.9.39</b> · Ollama-only · No API key · No account</p>
+        <p class="version-pill"><span class="dot" aria-hidden="true"></span> <b class="live-version">v0.9.40</b> · Ollama-only · No API key · No account</p>
         <h1>AI that reads your project first. And changes <em>nothing</em> until you say so.</h1>
         <p class="lede">LocalNest is a AI coding agent for Antigravity. It runs on models you pull with <strong>Ollama on your own computer</strong> — so your code never leaves your machine, and there is nothing to sign up for.</p>
         <div class="cta-row">
@@ -486,13 +486,23 @@
   <!-- WHAT'S NEW -->
   <section class="block" id="whats-new" aria-labelledby="whats-new-heading">
     <div class="section-head">
-      <span class="num">NEW IN v0.9.39</span>
+      <span class="num">NEW IN v0.9.40</span>
       <h2 id="whats-new-heading">What&rsquo;s new in LocalNest</h2>
-      <p>Everything added since the first version is in the extension — and now it is on this page too. The version pill above updates itself from Open VSX, so the number is never the only thing that is current. v0.9.39 adds three new skills — /debug, /optimize and /translate. v0.9.38 tidied the panel, removing the intro card and the per-reply stats footer.</p>
+      <p>Everything added since the first version is in the extension — and now it is on this page too. The version pill above updates itself from Open VSX, so the number is never the only thing that is current. v0.9.40 reads your git diff: commit messages straight from the diff, and code review of exactly what is staged. v0.9.39 added three new skills — /debug, /optimize and /translate.</p>
     </div>
     <div class="modes">
       <div class="mode-row-item">
       <div class="mode-row-item">
+      <div class="mode-row-item">
+        <div><p class="mode-name">Commit messages from the git diff<span>v0.9.40 — /commit</span></p></div>
+        <div><h4>It does</h4><p>Type <code>/commit</code> on its own — no description needed — and LocalNest reads the git diff (staged changes first, unstaged when nothing is staged) and writes a conventional-commit message from it: the scope from the files changed, the type from what the diff does.</p></div>
+        <div><h4>It never</h4><p class="dim">Invents a change that is not in the diff. If there is nothing to commit, or the folder is not a git repo, it says so plainly.</p></div>
+      </div>
+      <div class="mode-row-item">
+        <div><p class="mode-name">Review staged changes<span>v0.9.40 — /review staged</span></p></div>
+        <div><h4>It does</h4><p>Type <code>/review staged</code> — or just say &ldquo;review staged changes&rdquo; — and LocalNest reviews exactly what is about to be committed, grouped Critical / Major / Minor with a concrete fix for each finding.</p></div>
+        <div><h4>It never</h4><p class="dim">Stages or commits anything for you. It only reads the diff — the commit itself stays yours.</p></div>
+      </div>
         <div><p class="mode-name">Debug from an error<span>v0.9.39 — /debug</span></p></div>
         <div><h4>It does</h4><p>Paste an error message or stack trace with the code and type <code>/debug</code>. LocalNest finds the root cause first — the exact line and why it fails — explains it in a line or two, then gives the fix.</p></div>
         <div><h4>It never</h4><p class="dim">Guesses from the error alone. If the error does not pin the cause down, it says what is missing instead of inventing a fix.</p></div>
@@ -894,7 +904,7 @@
   // banner, no reload. A pill only ever moves forward: if the listing is
   // behind this page, the page keeps its own version. Keep EMBEDDED_VERSION
   // in sync with the .live-version pills.
-  var EMBEDDED_VERSION = "0.9.39";
+  var EMBEDDED_VERSION = "0.9.40";
   function isNewer(a, b) {
     var pa = String(a).split(".");
     var pb = String(b).split(".");
