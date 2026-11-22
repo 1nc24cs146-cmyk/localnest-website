@@ -397,7 +397,7 @@
   <div class="wrap nav-inner">
     <a class="wordmark" href="#top" aria-label="LocalNest home">
       <img src="logo.svg" width="28" height="28" alt="LocalNest logo — the same logo as in Antigravity" style="border-radius:7px;flex:none" />
-      LocalNest <small class="live-version">v0.9.40</small>
+      LocalNest <small class="live-version">v0.9.41</small>
     </a>
     <nav class="links" aria-label="Page">
       <a href="#how-it-works">How it works</a>
@@ -420,7 +420,7 @@
     <div class="hero-3d" aria-hidden="true"><span class="c1"></span><span class="c2"></span><span class="c3"></span></div>
     <div class="hero-grid">
       <div>
-        <p class="version-pill"><span class="dot" aria-hidden="true"></span> <b class="live-version">v0.9.40</b> · Ollama-only · No API key · No account</p>
+        <p class="version-pill"><span class="dot" aria-hidden="true"></span> <b class="live-version">v0.9.41</b> · Ollama-only · No API key · No account</p>
         <h1>AI that reads your project first. And changes <em>nothing</em> until you say so.</h1>
         <p class="lede">LocalNest is a AI coding agent for Antigravity. It runs on models you pull with <strong>Ollama on your own computer</strong> — so your code never leaves your machine, and there is nothing to sign up for.</p>
         <div class="cta-row">
@@ -486,11 +486,26 @@
   <!-- WHAT'S NEW -->
   <section class="block" id="whats-new" aria-labelledby="whats-new-heading">
     <div class="section-head">
-      <span class="num">NEW IN v0.9.40</span>
+      <span class="num">NEW IN v0.9.41</span>
       <h2 id="whats-new-heading">What&rsquo;s new in LocalNest</h2>
-      <p>Everything added since the first version is in the extension — and now it is on this page too. The version pill above updates itself from Open VSX, so the number is never the only thing that is current. v0.9.40 reads your git diff: commit messages straight from the diff, and code review of exactly what is staged. v0.9.39 added three new skills — /debug, /optimize and /translate.</p>
+      <p>Everything added since the first version is in the extension — and now it is on this page too. The version pill above updates itself from Open VSX, so the number is never the only thing that is current. v0.9.41 connects GitHub: link your account, push your changes, and publish a whole project — all from the chat panel. v0.9.40 reads your git diff: commit messages straight from the diff, and code review of exactly what is staged.</p>
     </div>
     <div class="modes">
+      <div class="mode-row-item">
+        <div><p class="mode-name">Connect your GitHub account<span>v0.9.41 — /github connect</span></p></div>
+        <div><h4>It does</h4><p>Type <code>/github connect</code> — or tap Connect GitHub at the top of the panel — and paste a personal access token (classic token with the <code>repo</code> scope). LocalNest checks the token belongs to you before storing it, and the panel shows you are connected, as who. <code>/github status</code> shows the connection plus this folder&rsquo;s branch, remote, and unpushed changes.</p></div>
+        <div><h4>It never</h4><p class="dim">Puts the token in a file, in settings, or in chat history. It lives only in the editor&rsquo;s secure storage, and <code>/github disconnect</code> deletes it.</p></div>
+      </div>
+      <div class="mode-row-item">
+        <div><p class="mode-name">Push changes to GitHub<span>v0.9.41 — /push</span></p></div>
+        <div><h4>It does</h4><p>Type <code>/push</code> and LocalNest writes the commit message from your changes, shows it to you, and waits for you to reply <code>push it</code> — staging, committing, and pushing only happen after that. If only finished commits are waiting, it pushes those instead.</p></div>
+        <div><h4>It never</h4><p class="dim">Commits or pushes on its own, and the token never appears in a command line, a remote URL, or an error message.</p></div>
+      </div>
+      <div class="mode-row-item">
+        <div><p class="mode-name">Publish a project to GitHub<span>v0.9.41 — /publish</span></p></div>
+        <div><h4>It does</h4><p>Type <code>/publish</code> and LocalNest asks the repo name (defaults to the folder name) and Private/Public, confirms once, then creates the repository on your account, sets it as the remote, and pushes the whole project to it.</p></div>
+        <div><h4>It never</h4><p class="dim">Creates a repo without asking, or publishes a project that is already on GitHub — then it says so and points you to <code>/push</code> instead.</p></div>
+      </div>
       <div class="mode-row-item">
       <div class="mode-row-item">
       <div class="mode-row-item">
@@ -553,7 +568,7 @@
       </div>
       <div class="mode-row-item">
         <div><p class="mode-name">Your own skills &amp; rules<span>Slash skills, custom ones too</span></p></div>
-        <div><h4>It does</h4><p>Fourteen built-in slash skills — /review /test /fix /explain /docs /refactor /commit /security /summarize /autofix /qa /debug /optimize /translate — plus your own: drop a file in <code>.localnest/skills/&lt;name&gt;.md</code> and <code>/&lt;name&gt;</code> runs it. Project rules from <code>.localnest/rules.md</code> or <code>AGENTS.md</code> are followed in every answer.</p></div>
+        <div><h4>It does</h4><p>Seventeen built-in slash skills — /review /test /fix /explain /docs /refactor /commit /security /summarize /autofix /qa /debug /optimize /translate /github /push /publish — plus your own: drop a file in <code>.localnest/skills/&lt;name&gt;.md</code> and <code>/&lt;name&gt;</code> runs it. Project rules from <code>.localnest/rules.md</code> or <code>AGENTS.md</code> are followed in every answer.</p></div>
         <div><h4>It never</h4><p class="dim">Sends your rules or skills anywhere. They are read from your project, on your machine.</p></div>
       </div>
       <div class="mode-row-item">
@@ -904,7 +919,7 @@
   // banner, no reload. A pill only ever moves forward: if the listing is
   // behind this page, the page keeps its own version. Keep EMBEDDED_VERSION
   // in sync with the .live-version pills.
-  var EMBEDDED_VERSION = "0.9.40";
+  var EMBEDDED_VERSION = "0.9.41";
   function isNewer(a, b) {
     var pa = String(a).split(".");
     var pb = String(b).split(".");
