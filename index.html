@@ -397,7 +397,7 @@
   <div class="wrap nav-inner">
     <a class="wordmark" href="#top" aria-label="LocalNest home">
       <img src="logo.svg" width="28" height="28" alt="LocalNest logo — the same logo as in Antigravity" style="border-radius:7px;flex:none" />
-      LocalNest <small class="live-version">v0.9.41</small>
+      LocalNest <small class="live-version">v0.9.42</small>
     </a>
     <nav class="links" aria-label="Page">
       <a href="#how-it-works">How it works</a>
@@ -420,7 +420,7 @@
     <div class="hero-3d" aria-hidden="true"><span class="c1"></span><span class="c2"></span><span class="c3"></span></div>
     <div class="hero-grid">
       <div>
-        <p class="version-pill"><span class="dot" aria-hidden="true"></span> <b class="live-version">v0.9.41</b> · Ollama-only · No API key · No account</p>
+        <p class="version-pill"><span class="dot" aria-hidden="true"></span> <b class="live-version">v0.9.42</b> · Ollama-only · No API key · No account</p>
         <h1>AI that reads your project first. And changes <em>nothing</em> until you say so.</h1>
         <p class="lede">LocalNest is a AI coding agent for Antigravity. It runs on models you pull with <strong>Ollama on your own computer</strong> — so your code never leaves your machine, and there is nothing to sign up for.</p>
         <div class="cta-row">
@@ -486,11 +486,31 @@
   <!-- WHAT'S NEW -->
   <section class="block" id="whats-new" aria-labelledby="whats-new-heading">
     <div class="section-head">
-      <span class="num">NEW IN v0.9.41</span>
+      <span class="num">NEW IN v0.9.42</span>
       <h2 id="whats-new-heading">What&rsquo;s new in LocalNest</h2>
-      <p>Everything added since the first version is in the extension — and now it is on this page too. The version pill above updates itself from Open VSX, so the number is never the only thing that is current. v0.9.41 connects GitHub: link your account, push your changes, and publish a whole project — all from the chat panel. v0.9.40 reads your git diff: commit messages straight from the diff, and code review of exactly what is staged.</p>
+      <p>Everything added since the first version is in the extension — and now it is on this page too. The version pill above updates itself from Open VSX, so the number is never the only thing that is current. v0.9.42 writes your PR description from the diff, renames a symbol across the whole project, writes release notes from your commits, and reads error screenshots with a vision model. v0.9.41 connects GitHub: link your account, push your changes, and publish a whole project — all from the chat panel.</p>
     </div>
     <div class="modes">
+      <div class="mode-row-item">
+        <div><p class="mode-name">PR description from the diff<span>v0.9.42 — /pr</span></p></div>
+        <div><h4>It does</h4><p>Type <code>/pr</code> on its own — no description needed — and LocalNest reads your changes (staged first, unstaged when nothing is staged) and writes the pull request description: a title, a short summary, what changed grouped by area, why, and concrete steps to test it.</p></div>
+        <div><h4>It never</h4><p class="dim">Invents a change that is not in the diff. If there is nothing to describe, it says so plainly.</p></div>
+      </div>
+      <div class="mode-row-item">
+        <div><p class="mode-name">Rename across the whole project<span>v0.9.42 — /rename</span></p></div>
+        <div><h4>It does</h4><p>Type <code>/rename oldName newName</code> and LocalNest searches every file in the project, shows every place the name appears — file, line, and the line itself — and waits for you to reply <code>yes, rename</code> before changing anything.</p></div>
+        <div><h4>It never</h4><p class="dim">Renames part of a longer name — <code>foo</code> inside <code>fooBar</code> is never touched — and it never searches node_modules, .git, or build output.</p></div>
+      </div>
+      <div class="mode-row-item">
+        <div><p class="mode-name">Release notes from commits<span>v0.9.42 — /release</span></p></div>
+        <div><h4>It does</h4><p>Type <code>/release</code> and LocalNest reads the commits since the last tag (or the last 20 when there is no tag), groups them Added / Fixed / Docs / Changed, and writes the notes — with the next version suggested, minor when a feature landed, patch for fixes only.</p></div>
+        <div><h4>It never</h4><p class="dim">Invents a change that is not in the commits. With Ollama offline it shows the grouped commits as plain text instead.</p></div>
+      </div>
+      <div class="mode-row-item">
+        <div><p class="mode-name">Read error screenshots<span>v0.9.42 — /vision, 📎 Attach image</span></p></div>
+        <div><h4>It does</h4><p>Tap 📎 Attach image next to Send, then ask what the screenshot shows — or type <code>/vision &lt;path to the image&gt; &lt;your question&gt;</code>. A vision model reads it and gives the fix. The image goes only to your own Ollama host, is held in memory for one question, then dropped.</p></div>
+        <div><h4>It never</h4><p class="dim">Guesses from a code model that cannot see images — if no vision model is installed, it says to pull moondream (small, fast on CPU) instead of pretending.</p></div>
+      </div>
       <div class="mode-row-item">
         <div><p class="mode-name">Connect your GitHub account<span>v0.9.41 — /github connect</span></p></div>
         <div><h4>It does</h4><p>Type <code>/github connect</code> — or tap Connect GitHub at the top of the panel — and paste a personal access token (classic token with the <code>repo</code> scope). LocalNest checks the token belongs to you before storing it, and the panel shows you are connected, as who. <code>/github status</code> shows the connection plus this folder&rsquo;s branch, remote, and unpushed changes.</p></div>
@@ -568,7 +588,7 @@
       </div>
       <div class="mode-row-item">
         <div><p class="mode-name">Your own skills &amp; rules<span>Slash skills, custom ones too</span></p></div>
-        <div><h4>It does</h4><p>Seventeen built-in slash skills — /review /test /fix /explain /docs /refactor /commit /security /summarize /autofix /qa /debug /optimize /translate /github /push /publish — plus your own: drop a file in <code>.localnest/skills/&lt;name&gt;.md</code> and <code>/&lt;name&gt;</code> runs it. Project rules from <code>.localnest/rules.md</code> or <code>AGENTS.md</code> are followed in every answer.</p></div>
+        <div><h4>It does</h4><p>Twenty-one built-in slash skills — /review /test /fix /explain /docs /refactor /commit /security /summarize /autofix /qa /debug /optimize /translate /github /push /publish /pr /rename /release /vision — plus your own: drop a file in <code>.localnest/skills/&lt;name&gt;.md</code> and <code>/&lt;name&gt;</code> runs it. Project rules from <code>.localnest/rules.md</code> or <code>AGENTS.md</code> are followed in every answer.</p></div>
         <div><h4>It never</h4><p class="dim">Sends your rules or skills anywhere. They are read from your project, on your machine.</p></div>
       </div>
       <div class="mode-row-item">
@@ -919,7 +939,7 @@
   // banner, no reload. A pill only ever moves forward: if the listing is
   // behind this page, the page keeps its own version. Keep EMBEDDED_VERSION
   // in sync with the .live-version pills.
-  var EMBEDDED_VERSION = "0.9.41";
+  var EMBEDDED_VERSION = "0.9.42";
   function isNewer(a, b) {
     var pa = String(a).split(".");
     var pb = String(b).split(".");
